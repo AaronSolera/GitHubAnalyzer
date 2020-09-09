@@ -8,12 +8,14 @@ import time
 
 github_token = ""
 github_repo = "dotnet/roslyn"
-workspace = ''
+workspace = ""
+info = ""
 
 def check_rate_limit(g):
     g.get_rate_limit()
     (remaining, maximum) = g.rate_limiting
     while remaining <= 20:
+        info = "Process is sleeping 1 hour due maximum reached.\n"
         print("sleeping...")
         time.sleep(3660)
         g = Github(github_token)
@@ -259,24 +261,29 @@ def get_pulls_comments(g):
                     (remaining, maximum) = g.rate_limiting
                     print("    ", adv*100/pulls_comments.totalCount, "%,    remaining:", remaining)
                 """
-                #if progress % 2 == 0:
+                if progress % 5 == 0:
+                    csv_writer.writerows(rows)
+                    rows = []
                 log_file.seek(0)
-                log_file.write(str(progress))
+                log_file.write("Task progress: " + str(progress) + "\n Aditional information: " + info)
                 log_file.truncate()
                 c = c + 1
                 attempt = 1
                 seconds = 1
-            except GithubException as g:
-                if g.status == 502 and attempt < 10:
+            except GithubException as ge:
+                if ge.status == 502 and attempt < 10:
+                    info = "Process is sleeping " + str(seconds) + " seconds due GithubException.\n"
                     print("Sleeping " + str(seconds) + " seconds.")
                     time.sleep(seconds)
                     seconds = seconds * 2
                     attempt = attempt + 1
                     continue
                 else:
+                    info = "Process finished by unspected reason:" + traceback.format_exc() + ".\n"
                     print(traceback.format_exc())
                     break
             except ConnectionError as ce:
+                info = "Connection error. Resuming task."
                 g = Github(github_token)
                 g.per_page = 100
                 continue

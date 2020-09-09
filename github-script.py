@@ -235,6 +235,7 @@ def get_pulls_comments(g):
     #adv = 0
 
     outCsvFile = open(workspace + 'pulls_comments.csv',  'w')
+    log_file = open("log.file","w")
     csv_writer = csv.writer(outCsvFile)
     rows = [['pull_no', 'comment_no', 'comment_body']]
 
@@ -251,12 +252,17 @@ def get_pulls_comments(g):
                 body = '' if comment.body is None else comment.body.encode('utf8')
                 rows.append([url[0], str(comment.id), body])
                 #adv += 1
-                print("    ", (len(rows) * 100)/pulls_comments.totalCount, "%    ", end="\r")
+                progress = (c * 100) / pulls_comments.totalCount
+                #print("    ", progress, "%    ", end="\r")
                 """
                 if adv % int(pulls_comments.totalCount/10) == 0:
                     (remaining, maximum) = g.rate_limiting
                     print("    ", adv*100/pulls_comments.totalCount, "%,    remaining:", remaining)
                 """
+                #if progress % 2 == 0:
+                log_file.seek(0)
+                log_file.write(str(progress))
+                log_file.truncate()
                 c = c + 1
                 attempt = 1
                 seconds = 1
@@ -279,7 +285,7 @@ def get_pulls_comments(g):
 
     csv_writer.writerows(rows)
     outCsvFile.close()
-
+    log_file.close()
     print(g.rate_limiting)
 
 g = Github(github_token)

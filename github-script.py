@@ -6,12 +6,13 @@ import traceback
 import csv
 import time
 
-github_token = ""
+github_token = "9e340aea607dcbf518b7c6c8a23342dd16870858"
 github_repo = "dotnet/roslyn"
 workspace = ""
 info = ""
 
 def check_rate_limit(g):
+    global info
     g.get_rate_limit()
     (remaining, maximum) = g.rate_limiting
     while remaining <= 20:
@@ -222,6 +223,7 @@ def get_issues_comments(g):
     print(g.rate_limiting)
 """
 def get_pulls_comments(g):
+    global info
     g = check_rate_limit(g)
     
     roslyn = g.get_repo(github_repo)
@@ -265,7 +267,7 @@ def get_pulls_comments(g):
                     csv_writer.writerows(rows)
                     rows = []
                 log_file.seek(0)
-                log_file.write("Task progress: " + str(progress) + "\n Aditional information: " + info)
+                log_file.write("Task progress: " + str(progress) + "\nAditional information: " + info)
                 log_file.truncate()
                 c = c + 1
                 attempt = 1

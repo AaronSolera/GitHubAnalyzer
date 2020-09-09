@@ -6,11 +6,7 @@ import traceback
 import csv
 import time
 
-#github_token = "0e0dc2cd0235b54f53bf31c5a41bafe209d83491"
-#github_repo = "dotnet/roslyn"
-#workspace = '/Users/jnavas/Documents/GitHub/roslyn/dataset/'
-
-github_token = "360ff0a67c9fdfb4cba1114388d1e7534a4c81be"
+github_token = ""
 github_repo = "dotnet/roslyn"
 workspace = ''
 

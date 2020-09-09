@@ -6,7 +6,7 @@ import traceback
 import csv
 import time
 
-github_token = "9e340aea607dcbf518b7c6c8a23342dd16870858"
+github_token = ""
 github_repo = "dotnet/roslyn"
 workspace = ""
 info = ""

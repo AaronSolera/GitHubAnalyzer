@@ -22,6 +22,7 @@ def check_rate_limit(g):
         (remaining, maximum) = g.rate_limiting
         print(g.rate_limiting)
     return g
+
 """
 def get_issues(g):
     g = check_rate_limit(g)
@@ -231,7 +232,6 @@ def get_pulls_comments(g):
     
     g = check_rate_limit(g)
     print("Total comments to retrieve: ", pulls_comments.totalCount)
-    #adv = 0
 
     outCsvFile = open(workspace + 'pulls_comments.csv',  'w')
     log_file = open("log.file","w")
@@ -250,18 +250,12 @@ def get_pulls_comments(g):
                 url.reverse()
                 body = '' if comment.body is None else comment.body.encode('utf8')
                 rows.append([url[0], str(comment.id), body])
-                #adv += 1
                 progress = (c * 100) / pulls_comments.totalCount
                 #print("    ", progress, "%    ", end="\n\r")
-                """
-                if adv % int(pulls_comments.totalCount/10) == 0:
-                    (remaining, maximum) = g.rate_limiting
-                    print("    ", adv*100/pulls_comments.totalCount, "%,    remaining:", remaining)
-                """
                 log_file.seek(0)
                 log_file.write("Task progress: " + str(progress) + "\n")
                 log_file.truncate()
-                c = c + 1
+                c += 1
                 attempt = 1
                 seconds = 1
             except GithubException as ge:

@@ -14,7 +14,7 @@ def check_rate_limit(g):
     g.get_rate_limit()
     (remaining, maximum) = g.rate_limiting
     while remaining <= 20:
-        print("    ", "Process is sleeping 1 hour due maximum rate limit reached", end="\r")
+        print("    ", "Process is sleeping 1 hour due maximum rate limit reached.", end="\n\r")
         time.sleep(3660)
         g = Github(github_token)
         g.per_page = 100
@@ -252,7 +252,7 @@ def get_pulls_comments(g):
                 rows.append([url[0], str(comment.id), body])
                 #adv += 1
                 progress = (c * 100) / pulls_comments.totalCount
-                print("    ", progress, "%    ", end="\r")
+                print("    ", progress, "%    ", end="\n\r")
                 """
                 if adv % int(pulls_comments.totalCount/10) == 0:
                     (remaining, maximum) = g.rate_limiting
@@ -271,21 +271,21 @@ def get_pulls_comments(g):
                 seconds = 1
             except GithubException as ge:
                 if ge.status == 502 and attempt < 10:
-                    print("    ", "Process is sleeping ", str(seconds), " seconds due GithubException.", end="\r")
+                    print("    ", "Process is sleeping ", str(seconds), " seconds due GithubException.", end="\n\r")
                     time.sleep(seconds)
                     seconds = seconds * 2
                     attempt = attempt + 1
                     continue
                 else:
-                    print("    ", "Process finished by unspected reason:", traceback.format_exc(), end="\r")
+                    print("    ", "Process finished by unspected reason:", traceback.format_exc(), end="\n\r")
                     break
             except ConnectionError as ce:
-                print("    ", "Connection error. Resuming task.", end="\r")
+                print("    ", "Connection error. Resuming task.", end="\n\r")
                 g = Github(github_token)
                 g.per_page = 100
                 continue
     except Exception as e:
-        print("    ", "Process finished by unspected reason:", traceback.format_exc(), end="\r")
+        print("    ", "Process finished by unspected reason:", traceback.format_exc(), end="\n\r")
 
     csv_writer.writerows(rows)
     outCsvFile.close()

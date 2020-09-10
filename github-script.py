@@ -14,7 +14,7 @@ def check_rate_limit(g):
     g.get_rate_limit()
     (remaining, maximum) = g.rate_limiting
     while remaining <= 20:
-        print("    ", "Process is sleeping 1 hour due maximum rate limit reached.", end="\n\r")
+        print("    ", "Process is sleeping 1 hour due maximum rate limit reached.\n")
         time.sleep(3660)
         g = Github(github_token)
         g.per_page = 100
@@ -234,7 +234,7 @@ def get_pulls_comments(g):
     #adv = 0
 
     outCsvFile = open(workspace + 'pulls_comments.csv',  'w')
-    #log_file = open("log.file","w")
+    log_file = open("log.file","w")
     csv_writer = csv.writer(outCsvFile)
     rows = [['pull_no', 'comment_no', 'comment_body']]
 
@@ -252,45 +252,45 @@ def get_pulls_comments(g):
                 rows.append([url[0], str(comment.id), body])
                 #adv += 1
                 progress = (c * 100) / pulls_comments.totalCount
-                print("    ", progress, "%    ", end="\n\r")
+                #print("    ", progress, "%    ", end="\n\r")
                 """
                 if adv % int(pulls_comments.totalCount/10) == 0:
                     (remaining, maximum) = g.rate_limiting
                     print("    ", adv*100/pulls_comments.totalCount, "%,    remaining:", remaining)
                 """
-                """
                 log_file.seek(0)
-                log_file.write("Task progress: " + str(progress) + "\n)
+                log_file.write("Task progress: " + str(progress) + "\n")
                 log_file.truncate()
-                """
                 c = c + 1
                 attempt = 1
                 seconds = 1
             except GithubException as ge:
                 if ge.status == 502 and attempt < 10:
-                    print("    ", "Process is sleeping ", str(seconds), " seconds due GithubException.", end="\n\r")
+                    print("    ", "Process is sleeping ", str(seconds), " seconds due GithubException.\n")
                     time.sleep(seconds)
                     seconds = seconds * 2
                     attempt = attempt + 1
                     continue
                 else:
-                    print("    ", "Process finished by unspected reason:", traceback.format_exc(), end="\n\r")
+                    print("    ", "Process finished by unspected reason:", traceback.format_exc(), "\n")
                     break
             except ConnectionError as ce:
-                print("    ", "Connection error. Resuming task.", end="\n\r")
+                print("    ", "Connection error. Resuming task.", end="\n")
                 g = Github(github_token)
                 g.per_page = 100
                 continue
     except Exception as e:
-        print("    ", "Process finished by unspected reason:", traceback.format_exc(), end="\n\r")
+        print("    ", "Process finished by unspected reason:", traceback.format_exc(), "\n")
 
     csv_writer.writerows(rows)
     outCsvFile.close()
-    #log_file.close()
-    print(g.rate_limiting)
+    log_file.close()
+    (remaining, maximum) = g.rate_limiting
+    print("Remaining: " + str(remaining) + "Maximum: " + str(maximum) + "\n")
 
 g = Github(github_token)
-print(g.rate_limiting)
+(remaining, maximum) = g.rate_limiting
+print("Remaining: " + str(remaining) + "Maximum: " + str(maximum) + "\n")
 g.per_page = 100
 
 get_pulls_comments(g)

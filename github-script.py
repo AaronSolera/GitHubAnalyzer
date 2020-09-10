@@ -258,9 +258,6 @@ def get_pulls_comments(g):
                     (remaining, maximum) = g.rate_limiting
                     print("    ", adv*100/pulls_comments.totalCount, "%,    remaining:", remaining)
                 """
-                if progress % 5 == 0:
-                    csv_writer.writerows(rows)
-                    rows = []
                 """
                 log_file.seek(0)
                 log_file.write("Task progress: " + str(progress) + "\n)

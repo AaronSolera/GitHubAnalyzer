@@ -5,8 +5,9 @@ import json
 import traceback
 import csv
 import time
+import re
 
-github_token = ""
+github_token = "a71a22cc3e8c5bcd249a5c3fae27b183117598ad"
 github_repo = "dotnet/roslyn"
 workspace = ""
 
@@ -233,13 +234,16 @@ def get_pulls_comments(g):
     g = check_rate_limit(g)
     print("Total comments to retrieve: ", pulls_comments.totalCount)
 
-    outCsvFile = open(workspace + 'pulls_comments.csv',  'w')
+    outCsvFile = open(workspace + 'pulls_comments.csv',  'r')
+    csv_reader = csv.reader(outCsvFile)
+    c = len(list(csv_reader))
+    print("    There are already", c, "lines of data\n")
+    outCsvFile = open(workspace + 'pulls_comments.csv',  'a')
     log_file = open("log.file","w")
     csv_writer = csv.writer(outCsvFile)
     rows = [['pull_no', 'comment_no', 'comment_body']]
 
     try:
-        c = 0
         attempt = 1
         seconds = 1
         while c < pulls_comments.totalCount:
@@ -251,7 +255,7 @@ def get_pulls_comments(g):
                 body = '' if comment.body is None else comment.body.encode('utf8')
                 rows.append([url[0], str(comment.id), body])
                 progress = (c * 100) / pulls_comments.totalCount
-                #print("    ", progress, "%    ", end="\n\r")
+                print("    ", progress, "%    ", end="\r")
                 log_file.seek(0)
                 log_file.write("Task progress: " + str(progress) + "\n")
                 log_file.truncate()
@@ -282,12 +286,30 @@ def get_pulls_comments(g):
     (remaining, maximum) = g.rate_limiting
     print("Remaining: " + str(remaining) + "Maximum: " + str(maximum) + "\n")
 
+def link_pulls_and_issues():
+    outCsvFile = open(workspace + 'link_pulls_issues.csv',  'w')
+    csv_writer = csv.writer(outCsvFile)
+    rows = [['pull_no', 'issue_no']]
+    with open('pulls_comments.csv', newline='', encoding='utf-8') as inCsvFile:
+        csv_reader = csv.reader(inCsvFile)
+        for row in csv_reader:
+            links = re.findall(r"([C|c]lose[s|d]?|[R|r]esolve[s|d]?|[F|f]ix|[F|f]ixe[s|d])\s+([\w|\-|/]*)?#(\d+)", str(row))
+            print("    Analyzing line ", csv_reader.line_num, "    ", end="\r")
+            for link in links:
+                rows.append([row[0], link[2]])
+    csv_writer.writerows(rows)
+    inCsvFile.close()
+    outCsvFile.close()
+
+
 g = Github(github_token)
 (remaining, maximum) = g.rate_limiting
-print("Remaining: " + str(remaining) + "Maximum: " + str(maximum) + "\n")
+print("Remaining: " + str(remaining) + " Maximum: " + str(maximum) + "\n")
 g.per_page = 100
 
-get_pulls_comments(g)
+    
 #get_pulls(g)
 #get_issues(g)
 #get_issues_comments(g)
+get_pulls_comments(g)
+#link_pulls_and_issues()

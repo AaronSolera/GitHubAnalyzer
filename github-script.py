@@ -234,16 +234,14 @@ def get_pulls_comments(g):
     g = check_rate_limit(g)
     print("Total comments to retrieve: ", pulls_comments.totalCount)
 
-    outCsvFile = open(workspace + 'pulls_comments.csv',  'r')
-    csv_reader = csv.reader(outCsvFile)
-    c = len(list(csv_reader))
-    print("    There are already", c, "lines of data\n")
-    outCsvFile = open(workspace + 'pulls_comments.csv',  'a')
+    outCsvFile = open(workspace + 'pulls_comments.csv',  'a+')
     log_file = open("log.file","w")
     csv_writer = csv.writer(outCsvFile)
+    csv_reader = csv.reader(outCsvFile)
     rows = [['pull_no', 'comment_no', 'comment_body']]
 
     try:
+        c = len(list(csv_reader))
         attempt = 1
         seconds = 1
         while c < pulls_comments.totalCount:
@@ -293,7 +291,7 @@ def link_pulls_and_issues():
     with open('pulls_comments.csv', newline='', encoding='utf-8') as inCsvFile:
         csv_reader = csv.reader(inCsvFile)
         for row in csv_reader:
-            links = re.findall(r"([C|c]lose[s|d]?|[R|r]esolve[s|d]?|[F|f]ix|[F|f]ixe[s|d])\s+([\w|\-|/]*)?#(\d+)", str(row))
+            links = re.findall(r"([C|c]lose[s|d]?|[R|r]esolve[s|d]?|[F|f]ix|[F|f]ixe[s|d])?\s+([\w|\-|/]*)?#(\d+)", str(row))
             print("    Analyzing line ", csv_reader.line_num, "    ", end="\r")
             for link in links:
                 rows.append([row[0], link[2]])

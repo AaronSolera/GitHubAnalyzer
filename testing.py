@@ -33,8 +33,9 @@ roslyn = g.get_repo(github_repo)
 g = check_rate_limit(g)
 
 # Get pull requests
-pull = roslyn.get_pull(2)
+pull = roslyn.get_pull(3)
 issue = pull.as_issue()
+print(pull)
 print(issue.as_pull_request())
 
 input("\nPress any key to close...")

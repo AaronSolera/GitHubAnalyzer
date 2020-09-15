@@ -1,0 +1,4 @@
+1. Utilizar el método pull_request() para obtener un objeto IssuePullRequest.py no es posible, debido a que brinda un mensaje de erro informando que el objeto IssuePullRequest.py no es un objeto que pueda ser llamado. En su lugar es mejor utilizar el método as_pull_request().
+
+2. Los métodos as_issue() y as_pull_request() no funcionan para retornar el issue o pull request asociado, se utilizan para convertir un issue en un pull_resquest y viceversa.
+

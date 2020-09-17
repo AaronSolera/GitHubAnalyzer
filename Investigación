@@ -1,4 +1,9 @@
-1. Utilizar el método pull_request() para obtener un objeto IssuePullRequest.py no es posible, debido a que brinda un mensaje de erro informando que el objeto IssuePullRequest.py no es un objeto que pueda ser llamado. En su lugar es mejor utilizar el método as_pull_request().
+1. Utilizar el método pull_request() para obtener un objeto IssuePullRequest.py no es posible, debido a que brinda un mensaje de error informando que el objeto IssuePullRequest.py no es un objeto que pueda ser llamado (esto se debe a que su código contiene un @property). En su lugar es mejor utilizar el método as_pull_request() presente en Issue.py.
 
-2. Los métodos as_issue() y as_pull_request() no funcionan para retornar el issue o pull request asociado, se utilizan para convertir un issue en un pull_resquest y viceversa.
+2. Es posible obtener los atributos que los métodod con @property retornan, se debe de acceder directarmente a dichos atributos sin utilizar el método que permite obtenerlos (getters).
 
+3. Los métodos as_issue() y as_pull_request() no funcionan para retornar el issue o pull request asociado, se utilizan para convertir un issue en un pull_resquest y viceversa.
+
+4. De IssuePullRequest.py solo se obtiene información de las urls. No brinda nada ignificativo.
+
+5. No hay forma de obtener los links manuales realizados por los usuarios. Se itentó utilizar los IssueEvents.py, pero no brindaban información relvante para obtener los links manuales directamente.

@@ -23,7 +23,7 @@ def check_rate_limit(g):
         (remaining, maximum) = g.rate_limiting
         print(g.rate_limiting)
     return g
-    
+
 g = Github(github_token)
 (remaining, maximum) = g.rate_limiting
 print("Remaining: " + str(remaining) + " Maximum: " + str(maximum) + "\n")
@@ -33,9 +33,16 @@ roslyn = g.get_repo(github_repo)
 g = check_rate_limit(g)
 
 # Get pull requests
-pull = roslyn.get_pull(3)
-issue = pull.as_issue()
-print(pull)
-print(issue.as_pull_request())
+issue = roslyn.get_issue(1)
+pull = roslyn.get_pull(5)
+
+issue_events = issue.get_events()
+pull_events = pull.get_issue_events() 
+
+for issue_event in issue_events.__iter__():
+    print("issue -> ", issue_event.event)
+
+for pull_event in pull_events.__iter__():
+    print("pull -> ", pull_event.event, "commit_id -> ")
 
 input("\nPress any key to close...")

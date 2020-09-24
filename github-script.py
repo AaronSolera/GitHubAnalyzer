@@ -7,7 +7,7 @@ import csv
 import time
 import re
 
-github_token = "3d573c754580f4960e82613d1d5f95e17a94b376"
+github_token = ""
 github_repo = "dotnet/roslyn"
 workspace = ""
 
@@ -283,7 +283,6 @@ def get_pulls_comments(g):
     log_file.close()
     (remaining, maximum) = g.rate_limiting
     print("Remaining: " + str(remaining) + "Maximum: " + str(maximum) + "\n")
-"""
 
 g = Github(github_token)
 (remaining, maximum) = g.rate_limiting
@@ -370,6 +369,7 @@ def get_issues_and_pulls(g):
 get_issues_and_pulls(g)
 
 """
+"""
     This function returns a JSON structure like
     {
         {key_1: { atr1: [data_1, data_2, ... , data_n], atr_2: [data_1, data_2, ... , data_n], ... , atr_n: [data_1, data_2, ... , data_n]}},
@@ -378,7 +378,7 @@ get_issues_and_pulls(g)
         {key_n: { atr1: [data_1, data_2, ... , data_n], atr_2: [data_1, data_2, ... , data_n], ... , atr_n: [data_1, data_2, ... , data_n]}},
     }
 """
-"""
+
 def generate_json_from_csv(key_attribute, csv_path):
     json = {}
     with open(csv_path, "r") as csvfile:
@@ -449,7 +449,6 @@ outCsvFile = open(workspace + 'issues_analysis.csv',  'w')
 csv_writer = csv.writer(outCsvFile)
 csv_writer.writerows(rows)
 outCsvFile.close()
-
 """
 #   Analysing pull request data JSON
 """
@@ -491,4 +490,3 @@ csv_writer.writerows(rows)
 outCsvFile.close()
 
 input("\nPress any key to close...")
-"""

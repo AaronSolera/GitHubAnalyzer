@@ -523,7 +523,10 @@ def get_issues_and_pulls_events(g):
                 g = check_rate_limit(g)
                 url = event.issue.html_url.split("/")
                 is_issue = (url[-2] == "issues")
-                temp_row = [event.actor.login, event.event, event.id, event.created_at]
+                if event.actor:
+                    temp_row = [event.actor.login, event.event, event.id, event.created_at]
+                else:
+                    temp_row = [None, event.event, event.id, event.created_at]
                 if is_issue:
                     issues_events_rows.append(temp_row)
                 else:
@@ -561,5 +564,3 @@ def get_issues_and_pulls_events(g):
     log_file.close()
 
 get_issues_and_pulls_events(g);
-
-input("\nPress any key to close...")

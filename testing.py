@@ -32,6 +32,12 @@ g.per_page = 100
 roslyn = g.get_repo(github_repo)
 g = check_rate_limit(g)
 
+issue_events = roslyn.get_issues_events()
+
+for issue_event in issue_events.__iter__():
+    print("Issues url:",issue_event.issue.html_url)
+
+"""
 # Get pull requests
 issue_no = 1
 pull_no = 3
@@ -51,7 +57,6 @@ for pulls_comment in pulls_comments.__iter__():
 for pulls_review_comment in pulls_review_comments.__iter__():
     print("Pulls review comment:", pulls_review_comment.body)
 
-"""
 pull_commnets = roslyn.get_pulls_review_comments()
 issue_commnets = roslyn.get_issues_comments()
 

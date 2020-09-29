@@ -361,14 +361,6 @@ def get_issues_and_pulls(g):
     log_file.close()
 
     print(g.rate_limiting)
-    
-#get_pulls(g)
-#get_issues(g)
-#get_issues_comments(g)
-#get_pulls_comments(g)
-#link_pulls_and_issues()
-#get_issues_and_pulls(g)
-
 """
 
 def generate_json_from_csv(key_attribute, csv_path):
@@ -510,8 +502,8 @@ def get_issues_and_pulls_events(g):
     issues_events_csv_writer = csv.writer(issuesEventsCsvFile)
     pulls_events_csv_writer = csv.writer(pullsEventsCsvFile)
 
-    issues_events_rows = [['actor', 'event', 'event_id', 'created_at']]
-    pulls_events_rows = [['actor', 'event', 'event_id', 'created_at']]
+    issues_events_rows = [['issue_no', 'actor', 'event', 'event_id', 'created_at']]
+    pulls_events_rows = [['pull_no', 'actor', 'event', 'event_id', 'created_at']]
 
     try:
         c = 0
@@ -524,9 +516,9 @@ def get_issues_and_pulls_events(g):
                 url = event.issue.html_url.split("/")
                 is_issue = (url[-2] == "issues")
                 if event.actor:
-                    temp_row = [event.actor.login, event.event, event.id, event.created_at]
+                    temp_row = [event.issue.number, event.actor.login, event.event, event.id, event.created_at]
                 else:
-                    temp_row = [None, event.event, event.id, event.created_at]
+                    temp_row = [event.issue.number, None, event.event, event.id, event.created_at]
                 if is_issue:
                     issues_events_rows.append(temp_row)
                 else:
@@ -563,4 +555,10 @@ def get_issues_and_pulls_events(g):
     pullsEventsCsvFile.close()
     log_file.close()
 
-get_issues_and_pulls_events(g);
+#get_pulls(g)
+#get_issues(g)
+#get_issues_comments(g)
+#get_pulls_comments(g)
+#link_pulls_and_issues()
+#get_issues_and_pulls(g)
+#get_issues_and_pulls_events(g);

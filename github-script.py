@@ -561,4 +561,4 @@ def get_issues_and_pulls_events(g):
 #get_pulls_comments(g)
 #link_pulls_and_issues()
 #get_issues_and_pulls(g)
-#get_issues_and_pulls_events(g);
+get_issues_and_pulls_events(g);

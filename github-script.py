@@ -7,7 +7,7 @@ import csv
 import time
 import re
 
-github_token = ""
+github_token = "bc6c00431fda07373db60ca7aa00d55ba77a5a3a"
 github_repo = "dotnet/roslyn"
 workspace = ""
 

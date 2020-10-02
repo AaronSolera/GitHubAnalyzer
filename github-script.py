@@ -7,7 +7,7 @@ import csv
 import time
 import re
 
-github_token = "bc6c00431fda07373db60ca7aa00d55ba77a5a3a"
+github_token = ""
 github_repo = "dotnet/roslyn"
 workspace = ""
 
@@ -23,6 +23,7 @@ def check_rate_limit(g):
         (remaining, maximum) = g.rate_limiting
         print(g.rate_limiting)
     return g
+
 
 g = Github(github_token)
 (remaining, maximum) = g.rate_limiting
@@ -361,8 +362,95 @@ def get_issues_and_pulls(g):
     log_file.close()
 
     print(g.rate_limiting)
-"""
 
+def get_issues_and_pulls_events(g):
+    g = check_rate_limit(g)
+    
+    roslyn = g.get_repo(github_repo)
+    
+    g = check_rate_limit(g)
+
+    # Get issues comments
+    issues_events = roslyn.get_issues_events()
+    
+    g = check_rate_limit(g)
+    print("-"*30,"\n","Getting issues events from",github_repo,"\n","-"*30)
+    print("Total events to retrieve: ", issues_events.totalCount)
+
+    issuesEventsCsvFile = open(workspace + 'issues_events.csv',  'w')
+    pullsEventsCsvFile = open(workspace + 'pulls_events.csv',  'w')
+    log_file = open("log.file","w")
+
+    issues_events_csv_writer = csv.writer(issuesEventsCsvFile)
+    pulls_events_csv_writer = csv.writer(pullsEventsCsvFile)
+
+    issues_events_rows = [['issue_no', 'actor', 'event', 'event_id', 'created_at']]
+    pulls_events_rows = [['pull_no', 'actor', 'event', 'event_id', 'created_at']]
+
+    try:
+        c = 0
+        attempt = 1
+        seconds = 1
+        while c < issues_events.totalCount:
+            try:
+                event = issues_events[c]
+                g = check_rate_limit(g)
+                url = event.issue.html_url.split("/")
+                is_issue = (url[-2] == "issues")
+                if event.actor:
+                    temp_row = [event.issue.number, event.actor.login, event.event, event.id, event.created_at]
+                else:
+                    temp_row = [event.issue.number, None, event.event, event.id, event.created_at]
+                if is_issue:
+                    issues_events_rows.append(temp_row)
+                else:
+                    pulls_events_rows.append(temp_row)
+                progress = (c * 100) / issues_events.totalCount
+                #print("     Task progress: ", progress, "%    ", end="\r")
+                log_file.seek(0)
+                log_file.write("Task progress: " + str(progress) + "\n")
+                log_file.truncate()
+                c = c + 1
+                attempt = 1
+                seconds = 1
+            except GithubException as g:
+                if g.status == 502 and attempt < 10:
+                    print("Sleeping " + str(seconds) + " seconds.")
+                    time.sleep(seconds)
+                    seconds = seconds * 2
+                    attempt = attempt + 1
+                    continue
+                else:
+                    print(traceback.format_exc())
+                    break
+            except ConnectionError as ce:
+                g = Github(github_token)
+                g.per_page = 100
+                continue
+    except Exception as e:
+        print(traceback.format_exc())
+
+    issues_events_csv_writer.writerows(issues_events_rows)
+    pulls_events_csv_writer.writerows(pulls_events_rows)
+    
+    issuesEventsCsvFile.close()
+    pullsEventsCsvFile.close()
+    log_file.close()
+"""
+def csv_to_json_list(csv_path):
+    with open(csv_path, "r") as csvfile:
+        lines = csvfile.read().splitlines()
+        keys = lines[0].split(",")
+        keys_length = len(keys)
+        cvs_list = []
+        for line in lines[1:]:
+            temp_json = {}
+            row = line.split(",", keys_length)
+            for index in range(keys_length):
+                temp_json[keys[index]] = row[index]
+            cvs_list.append(temp_json)
+    return cvs_list
+    
 def generate_json_from_csv(key_attribute, csv_path):
     """
     This function returns a JSON structure like
@@ -380,8 +468,8 @@ def generate_json_from_csv(key_attribute, csv_path):
         keys_length = len(keys)
         key_id_index = keys.index(key_attribute)
         keys.remove(key_attribute)
-        for lines in lines[1:]:
-            row = lines.split(",", keys_length)
+        for line in lines[1:]:
+            row = line.split(",", keys_length)
             key = row[key_id_index]
             row.remove(key)
             if not key in json:
@@ -481,58 +569,88 @@ def analyze_issues_and_pulls():
     csv_writer.writerows(rows)
     outCsvFile.close()
 
-def get_issues_and_pulls_events(g):
+def analyze_linking_events():
+    issues_events_list = csv_to_json_list('issues_events.csv')
+    pulls_events_list = csv_to_json_list('pulls_events.csv')
+
+    filtered_issues_events_list = []
+    filtered_pulls_events_list = []
+
+    for issue_event in issues_events_list:
+        if issue_event['event'] in ['connected','disconnected']:
+            filtered_issues_events_list.append(issue_event)
+
+    for pull_event in pulls_events_list:
+        if pull_event['event'] in ['connected','disconnected']:
+            filtered_pulls_events_list.append(pull_event) 
+
+    linked_issues_and_pull_events = [['issue_no', 'pull_no', 'actor', 'created_at', 'event']]
+
+    for issue_event in filtered_issues_events_list:
+        for pull_event in filtered_pulls_events_list:
+
+            issue_relevant_data = [issue_event['actor'], issue_event['created_at'], issue_event['event']]
+            pull_relevant_data = [pull_event['actor'], pull_event['created_at'], pull_event['event']]
+
+            if issue_relevant_data == pull_relevant_data:
+                linked_issues_and_pull_events.append([issue_event['issue_no'], pull_event['pull_no']] + issue_relevant_data) 
+    
+    analyzedEventsCsvFile = open(workspace + 'linking_analysis.csv',  'w')
+
+    issues_events_csv_writer = csv.writer(analyzedEventsCsvFile)
+    issues_events_csv_writer.writerows(linked_issues_and_pull_events)
+    
+    analyzedEventsCsvFile.close()
+
+def get_pulls_commits(g):
     g = check_rate_limit(g)
     
     roslyn = g.get_repo(github_repo)
+    g = check_rate_limit(g)
     
+    # Get issues
+    issues = roslyn.get_issues(state = "all")
     g = check_rate_limit(g)
 
-    # Get issues comments
-    issues_events = roslyn.get_issues_events()
-    
-    g = check_rate_limit(g)
-    print("-"*30,"\n","Getting issues events from",github_repo,"\n","-"*30)
-    print("Total events to retrieve: ", issues_events.totalCount)
+    print("Total issues and pull requests to retrieve: ", issues.totalCount)
 
-    issuesEventsCsvFile = open(workspace + 'issues_events.csv',  'w')
-    pullsEventsCsvFile = open(workspace + 'pulls_events.csv',  'w')
+    pullCommitsCsvFile = open(workspace + 'pulls_commits.csv',  'w')
     log_file = open("log.file","w")
-
-    issues_events_csv_writer = csv.writer(issuesEventsCsvFile)
-    pulls_events_csv_writer = csv.writer(pullsEventsCsvFile)
-
-    issues_events_rows = [['issue_no', 'actor', 'event', 'event_id', 'created_at']]
-    pulls_events_rows = [['pull_no', 'actor', 'event', 'event_id', 'created_at']]
+    commit_csv_writer = csv.writer(pullCommitsCsvFile)
+    pull_commits_rows = [['pull_id', 'pull_no', 'commit_sha']]
+    
+    pullCommitsTotalCsvFile = open(workspace + 'pulls_commits_total.csv',  'w')
+    commits_total_csv_writer = csv.writer(pullCommitsTotalCsvFile)
+    pull_commits_total_rows = [['pull_id', 'pull_no', 'total_commits']]
 
     try:
         c = 0
         attempt = 1
         seconds = 1
-        while c < issues_events.totalCount:
+        while c < issues.totalCount:
             try:
-                event = issues_events[c]
+                issue = issues[c]
                 g = check_rate_limit(g)
-                url = event.issue.html_url.split("/")
+                
+                url = issue.html_url.split("/")
                 is_issue = (url[-2] == "issues")
-                if event.actor:
-                    temp_row = [event.issue.number, event.actor.login, event.event, event.id, event.created_at]
-                else:
-                    temp_row = [event.issue.number, None, event.event, event.id, event.created_at]
-                if is_issue:
-                    issues_events_rows.append(temp_row)
-                else:
-                    pulls_events_rows.append(temp_row)
-                progress = (c * 100) / issues_events.totalCount
-                #print("     Task progress: ", progress, "%    ", end="\r")
+
+                title = '' if issue.title is None else issue.title.encode('utf8')
+                body = '' if issue.body is None else issue.body.encode('utf8')
+                if not is_issue:
+                    pull = issue.as_pull_request()
+                    commits = pull.get_commits()
+                    pull_commits_total_rows.append([pull.id, pull.number, commits.totalCount])
+                    for commit in commits.__iter__():
+                        pull_commits_rows.append([pull.id, pull.number, commit.sha])
                 log_file.seek(0)
-                log_file.write("Task progress: " + str(progress) + "\n")
+                log_file.write("Task progress: " + str(c*100/issues.totalCount) + "\n")
                 log_file.truncate()
                 c = c + 1
                 attempt = 1
                 seconds = 1
-            except GithubException as g:
-                if g.status == 502 and attempt < 10:
+            except GithubException as ge:
+                if ge.status == 502 and attempt < 10:
                     print("Sleeping " + str(seconds) + " seconds.")
                     time.sleep(seconds)
                     seconds = seconds * 2
@@ -548,17 +666,20 @@ def get_issues_and_pulls_events(g):
     except Exception as e:
         print(traceback.format_exc())
 
-    issues_events_csv_writer.writerows(issues_events_rows)
-    pulls_events_csv_writer.writerows(pulls_events_rows)
-    
-    issuesEventsCsvFile.close()
-    pullsEventsCsvFile.close()
+    commit_csv_writer.writerows(pull_commits_rows)
+    commits_total_csv_writer.writerows(pull_commits_total_rows)
+
+    pullCommitsCsvFile.close()
+    pullCommitsTotalCsvFile.close()
     log_file.close()
+
+    print(g.rate_limiting)
 
 #get_pulls(g)
 #get_issues(g)
 #get_issues_comments(g)
 #get_pulls_comments(g)
-#link_pulls_and_issues()
 #get_issues_and_pulls(g)
-get_issues_and_pulls_events(g);
+#get_issues_and_pulls_events(g)
+
+get_pulls_commits(g)

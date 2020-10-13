@@ -1,0 +1,34 @@
+--------------------------------------------------------------
+
+Número de issues asociados a pulls: 
+Número de issues no asociados a pulls:
+Número de pulls no asociados a issues:
+
+Porcentaje de issues asociados a pulls: 
+Porcentaje de issues no asociados a pulls: 
+Porcentaje de pulls asociados a issues: 
+Porcentaje de pulls no asociados a issues: 
+
+--------------------------------------------------------------
+
+Número de pulls asociados a commits: 
+Número de pulls no asociados a commits: 
+Número de commits no asociados a pulls:
+
+Porcentaje de pulls asociados a commits: 
+Porcentaje de pulls no asociados a commits:
+Porcentaje de commits asociados a pulls: 
+Porcentaje de commits no asociados a pulls:
+
+--------------------------------------------------------------
+
+Número de issues asociados a commits:
+Número de issues no asociados a commits:
+Número de commits no asociados a issues: 
+
+Porcentaje de issues asociados a commits:
+Porcentaje de issues no asociados a commits:
+Porcentaje de commits asociados a issues:
+Porcentaje de commits no asociados a issues:
+
+--------------------------------------------------------------

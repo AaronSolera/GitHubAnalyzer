@@ -449,6 +449,7 @@ def csv_to_json_list(csv_path):
             for index in range(keys_length):
                 temp_json[keys[index]] = row[index]
             cvs_list.append(temp_json)
+                for index in range(keys_length):
     return cvs_list
     
 def generate_json_from_csv(key_attribute, csv_path):

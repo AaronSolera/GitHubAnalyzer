@@ -683,14 +683,7 @@ def link_commits_pulls_and_issues(g):
     roslyn = g.get_repo(github_repo)
     # Get commits
     commits = roslyn.get_commits()
-    # ------------------------------------------------
-    # Getting updated total number of issues and pulls
-    # ------------------------------------------------
-    issues = generate_json_from_csv('issue_no', 'issues.csv')
-    pulls = generate_json_from_csv('pull_no', 'pulls.csv')
-    pulls_total = len(issues)
-    issues_total = len(pulls)
-    # ------------------------------------------------
+    
     g = check_rate_limit(g)
     print("Total comments to retrieve: ", commits.totalCount)
 
@@ -724,7 +717,7 @@ def link_commits_pulls_and_issues(g):
         c = 0
         attempt = 1
         seconds = 1
-        while c < 10:
+        while c < commits.totalCount:
             try:
                 commit = commits[c]
                 g = check_rate_limit(g)
@@ -753,7 +746,7 @@ def link_commits_pulls_and_issues(g):
                         if there_are_not_issues:
                             rows.append([commit.sha, pull.number, 'None'])
             
-                progress = (c * 100) / 1000 #commits.totalCount
+                progress = (c * 100) / commits.totalCount
                 #print("    ", progress, "%    ", end="\r")
                 log_file.seek(0)
                 log_file.write("Task progress: " + str(progress) + "\n")
@@ -809,6 +802,14 @@ def link_commits_pulls_and_issues(g):
     print("Remaining: " + str(remaining) + "Maximum: " + str(maximum) + "\n")
 
 def get_linking_statistics():
+    # ------------------------------------------------
+    # Getting updated total number of issues and pulls
+    # ------------------------------------------------
+    issues = generate_json_from_csv('issue_no', 'issues.csv')
+    pulls = generate_json_from_csv('pull_no', 'pulls.csv')
+    pulls_total = len(issues)
+    issues_total = len(pulls)
+    # ------------------------------------------------
     linking_statistics = open("linking_statistics.txt","w")
     statistics = { 'issues asociados a pulls:':0, 'pulls asociados a commits:':0, 'issues asociados a commits:':0 }
     # Writing statistics in txt

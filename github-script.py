@@ -446,10 +446,10 @@ def csv_to_json_list(csv_path):
         for line in lines[1:]:
             temp_json = {}
             row = line.split(",", keys_length)
-            for index in range(keys_length):
-                temp_json[keys[index]] = row[index]
-            cvs_list.append(temp_json)
+            if not (len(row) < keys_length):
                 for index in range(keys_length):
+                    temp_json[keys[index]] = row[index]
+                cvs_list.append(temp_json)
     return cvs_list
     
 def generate_json_from_csv(key_attribute, csv_path):
@@ -471,15 +471,16 @@ def generate_json_from_csv(key_attribute, csv_path):
         keys.remove(key_attribute)
         for line in lines[1:]:
             row = line.split(",", keys_length)
-            key = row[key_id_index]
-            row.remove(key)
-            if not key in json:
-                json[key] = {}
-                for column in range(0, keys_length - 1):
-                    json[key][keys[column]] = [row[column]]
-            else:
-                for column in range(0, keys_length - 1):
-                    json[key][keys[column]].append(row[column])
+            if not (len(row) < keys_length):
+                key = row[key_id_index]
+                row.remove(key)
+                if not key in json:
+                    json[key] = {}
+                    for column in range(0, keys_length - 1):
+                        json[key][keys[column]] = [row[column]]
+                else:
+                    for column in range(0, keys_length - 1):
+                        json[key][keys[column]].append(row[column])
     return json
 
 def analyze_issues_and_pulls():
@@ -676,6 +677,149 @@ def get_pulls_commits(g):
 
     print(g.rate_limiting)
 
+def link_commits_pulls_and_issues(g):
+    g = check_rate_limit(g)
+    
+    roslyn = g.get_repo(github_repo)
+    # Get commits
+    commits = roslyn.get_commits()
+    # ------------------------------------------------
+    # Getting updated total number of issues and pulls
+    # ------------------------------------------------
+    issues = generate_json_from_csv('issue_no', 'issues.csv')
+    pulls = generate_json_from_csv('pull_no', 'pulls.csv')
+    pulls_total = len(issues)
+    issues_total = len(pulls)
+    # ------------------------------------------------
+    g = check_rate_limit(g)
+    print("Total comments to retrieve: ", commits.totalCount)
+
+    outCsvFile = open(workspace + 'linked_commits_pulls_and_issues.csv',  'w')
+    log_file = open("log.file","w")
+
+    csv_writer = csv.writer(outCsvFile)
+
+    linked_pull_issues = generate_json_from_csv("pull_no", workspace + "pull_request_analysis.csv")
+    pulls_without_commits = generate_json_from_csv("total_commits", workspace + "pulls_commits_total.csv")
+    manual_linked_pull_issues = csv_to_json_list(workspace + "linking_analysis.csv")
+
+    rows = [['commit_sha', 'pull_no', 'issue_no']]
+    # ---------------------------------------------------------------
+    # This code deletes disconnected events from linking_analysis.csv 
+    # ---------------------------------------------------------------
+    index = 0
+    while index < len(manual_linked_pull_issues):
+        current_element = manual_linked_pull_issues[index]
+        if current_element['event'] == 'disconnected':
+            delete_index = 0
+            element = manual_linked_pull_issues[delete_index]
+            while delete_index < len(manual_linked_pull_issues) and element['issue_no'] != current_element['issue_no'] and element['pull_no'] != current_element['issue_no'] and element['event'] != 'connected':
+                delete_index += 1
+                element = manual_linked_pull_issues[delete_index]
+            del manual_linked_pull_issues[index]
+            del manual_linked_pull_issues[delete_index]
+        index += 1
+    # ---------------------------------------------------------------
+    try:
+        c = 0
+        attempt = 1
+        seconds = 1
+        while c < 10:
+            try:
+                commit = commits[c]
+                g = check_rate_limit(g)
+                pulls = commit.get_pulls()
+                if pulls.totalCount == 0:
+                    # If there is not pulls for this commit
+                    rows.append([commit.sha, 'None', 'None'])
+                else:
+                    # If there are ...
+                    for pull in pulls.__iter__():
+                        # Saving all posible boolean scenarios for a pull-issue linking event
+                        there_are_issues = str(pull.number) in linked_pull_issues
+                        there_are_manual_issues = str(pull.number) in manual_linked_pull_issues
+                        there_are_not_issues = (not there_are_issues) and (not there_are_manual_issues)
+                        # Taking action according boolean scenario
+                        if there_are_issues:
+                            found_id = linked_pull_issues[str(pull.number)]['found_id']
+                            is_issue = linked_pull_issues[str(pull.number)]['is_issue']
+                            for i in range(len(is_issue)):
+                                if is_issue[i] == 'True':
+                                    rows.append([commit.sha, pull.number, found_id[i]])
+                        if there_are_manual_issues:
+                            for link in manual_linked_pull_issues:
+                                if str(pull.number) == link['pull_no']:
+                                    rows.append([commit.sha, pull.number, link['issue_no']])
+                        if there_are_not_issues:
+                            rows.append([commit.sha, pull.number, 'None'])
+            
+                progress = (c * 100) / 1000 #commits.totalCount
+                #print("    ", progress, "%    ", end="\r")
+                log_file.seek(0)
+                log_file.write("Task progress: " + str(progress) + "\n")
+                log_file.truncate()
+                c += 1
+                attempt = 1
+                seconds = 1
+            except GithubException as ge:
+                if ge.status == 502 and attempt < 10:
+                    print("    ", "Process is sleeping ", str(seconds), " seconds due GithubException.\n")
+                    time.sleep(seconds)
+                    seconds = seconds * 2
+                    attempt = attempt + 1
+                    continue
+                else:
+                    print("    ", "Process finished by unspected reason:", traceback.format_exc(), "\n")
+                    break
+            except ConnectionError as ce:
+                print("    ", "Connection error. Resuming task.", end="\n")
+                g = Github(github_token)
+                g.per_page = 100
+                continue
+    except Exception as e:
+        print("    ", "Process finished by unspected reason:", traceback.format_exc(), "\n")
+    # ---------------------------------------------------------------
+    # This codes link all pulls without commits with issues
+    # ---------------------------------------------------------------
+    for pull in pulls_without_commits['0']['pull_no']:
+        # Saving all posible boolean scenarios for a pull-issue linking event
+        there_are_issues = pull in linked_pull_issues
+        there_are_manual_issues = pull in manual_linked_pull_issues
+        there_are_not_issues = not there_are_issues and not there_are_manual_issues
+        # Taking action according boolean scenario
+        if there_are_issues:
+            found_id = linked_pull_issues[pull]['found_id']
+            is_issue = linked_pull_issues[pull]['is_issue']
+            for i in range(len(is_issue)):
+                if is_issue[i] == 'True':
+                    rows.append(['None', pull, found_id[i]])
+        if there_are_manual_issues:
+            for link in manual_linked_pull_issues:
+                if pull == link['pull_no']:
+                    rows.append(['None', pull, link['issue_no']])
+        if there_are_not_issues:
+            rows.append(['None', pull, 'None'])
+    # ---------------------------------------------------------------
+    csv_writer.writerows(rows)
+
+    outCsvFile.close()
+    log_file.close()
+
+    (remaining, maximum) = g.rate_limiting
+    print("Remaining: " + str(remaining) + "Maximum: " + str(maximum) + "\n")
+
+def get_linking_statistics():
+    linking_statistics = open("linking_statistics.txt","w")
+    statistics = { 'issues asociados a pulls:':0, 'pulls asociados a commits:':0, 'issues asociados a commits:':0 }
+    # Writing statistics in txt
+    for (data_label, data) in statistics.items():
+        total = issues_total
+        if data_label == 'pulls asociados a commits:':
+            total = pulls_total 
+        linking_statistics.write("Número de " + str(data_label) + " " + str(data) + "\n")
+        linking_statistics.write("Porcentaje de " + str(data_label) + " " + str((data * 100)/total) + "\n")
+    linking_statistics.close()
+
 #get_pulls(g)
 #get_issues(g)
 #get_issues_comments(g)
@@ -683,4 +827,4 @@ def get_pulls_commits(g):
 #get_issues_and_pulls(g)
 #get_issues_and_pulls_events(g)
 
-get_pulls_commits(g)
+link_commits_pulls_and_issues(g)

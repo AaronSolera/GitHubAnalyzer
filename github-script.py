@@ -437,6 +437,9 @@ def get_issues_and_pulls_events(g):
     pullsEventsCsvFile.close()
     log_file.close()
 """
+def del_duplicates(l):
+    return list(dict.fromkeys(l))
+
 def csv_to_json_list(csv_path):
     with open(csv_path, "r") as csvfile:
         lines = csvfile.read().splitlines()
@@ -488,10 +491,12 @@ def analyze_issues_and_pulls():
     #   Generating organized JSON data from issues related csv files
     """
     issues_json = generate_json_from_csv("issue_no","issues.csv")
+    issues_json.update(generate_json_from_csv("issue_no","issues_comments.csv"))
     """
     #   Generating organized JSON data from pull requests related csv files
     """
     pulls_json = generate_json_from_csv("pull_no","pulls.csv")
+    pulls_json.update(generate_json_from_csv("pull_no","pulls_comments.csv"))
     """
     #   Analysing issue data JSON
     """
@@ -677,6 +682,75 @@ def get_pulls_commits(g):
 
     print(g.rate_limiting)
 
+def get_commits_pulls(g):
+    g = check_rate_limit(g)
+    
+    roslyn = g.get_repo(github_repo)
+    # Get commits
+    commits = roslyn.get_commits()
+    
+    g = check_rate_limit(g)
+    print("Total comments to retrieve: ", commits.totalCount)
+
+    outCsvFile = open(workspace + 'commits_pulls.csv',  'w')
+    log_file = open("log.file","w")
+
+    csv_writer = csv.writer(outCsvFile)
+
+    rows = [['commit_sha', 'pull_no']]
+
+    try:
+        c = 0
+        attempt = 1
+        seconds = 1
+        while c < commits.totalCount:
+            try:
+                commit = commits[c]
+                g = check_rate_limit(g)
+                pulls = commit.get_pulls()
+                if pulls.totalCount == 0:
+                    # If there is not pulls for this commit
+                    rows.append([commit.sha, 'None'])
+                else:
+                    # If there are ...
+                    for pull in pulls.__iter__():
+                         rows.append([commit.sha, pull.number])
+            
+                progress = (c * 100) / commits.totalCount
+                #print("    ", progress, "%    ", end="\r")
+                log_file.seek(0)
+                log_file.write("Task progress: " + str(progress) + "\n")
+                log_file.truncate()
+                c += 1
+                attempt = 1
+                seconds = 1
+            except GithubException as ge:
+                if ge.status == 502 and attempt < 10:
+                    print("    ", "Process is sleeping ", str(seconds), " seconds due GithubException.\n")
+                    time.sleep(seconds)
+                    seconds = seconds * 2
+                    attempt = attempt + 1
+                    continue
+                else:
+                    print("    ", "Process finished by unspected reason:", traceback.format_exc(), "\n")
+                    break
+            except ConnectionError as ce:
+                print("    ", "Connection error. Resuming task.", end="\n")
+                g = Github(github_token)
+                g.per_page = 100
+                continue
+    except Exception as e:
+        print("    ", "Process finished by unspected reason:", traceback.format_exc(), "\n")
+
+    csv_writer.writerows(rows)
+
+    outCsvFile.close()
+    log_file.close()
+
+    (remaining, maximum) = g.rate_limiting
+    print("Remaining: " + str(remaining) + "Maximum: " + str(maximum) + "\n")
+
+
 def link_commits_pulls_and_issues(g):
     g = check_rate_limit(g)
     
@@ -803,22 +877,79 @@ def link_commits_pulls_and_issues(g):
 
 def get_linking_statistics():
     # ------------------------------------------------
-    # Getting updated total number of issues and pulls
+    # Getting updated total number of issues, commits and pulls
     # ------------------------------------------------
     issues = generate_json_from_csv('issue_no', 'issues.csv')
     pulls = generate_json_from_csv('pull_no', 'pulls.csv')
-    pulls_total = len(issues)
-    issues_total = len(pulls)
+    commits = generate_json_from_csv('commit_sha', 'linked_commits_pulls_and_issues.csv')
+    issues_total = len(issues)
+    pulls_total = len(pulls)
+    commits_total = len(commits) - 1 #This minus 1 is for None value commits
     # ------------------------------------------------
     linking_statistics = open("linking_statistics.txt","w")
-    statistics = { 'issues asociados a pulls:':0, 'pulls asociados a commits:':0, 'issues asociados a commits:':0 }
-    # Writing statistics in txt
-    for (data_label, data) in statistics.items():
-        total = issues_total
-        if data_label == 'pulls asociados a commits:':
-            total = pulls_total 
-        linking_statistics.write("Número de " + str(data_label) + " " + str(data) + "\n")
-        linking_statistics.write("Porcentaje de " + str(data_label) + " " + str((data * 100)/total) + "\n")
+    pair = { 'issues-pulls':[], 'pulls-commits':[], 'commits-issues':[], 'only-pulls':[], 'only-issues':[] }
+    linking_data = csv_to_json_list('linked_commits_pulls_and_issues.csv')
+    # Progress variable
+    progress = 0
+    # Storing all pair in pair dictionary if they are possible to build
+    for link in linking_data:
+        print("    Task progress: ", progress  * 100 / len(linking_data), "%    ", end="\r")
+
+        if link['pull_no'] != 'None' and link['issue_no'] != 'None':
+            pair['issues-pulls'].append(link['issue_no'] + "-" + link['pull_no'])
+
+        if link['pull_no'] != 'None' and link['commit_sha'] != 'None':
+            pair['pulls-commits'].append(link['pull_no'] + "-" + link['commit_sha'])
+            pair['only-pulls'].append(link['pull_no'])
+
+        if link['commit_sha'] != 'None' and link['issue_no'] != 'None':
+            pair['commits-issues'].append(link['commit_sha'] + "-" + link['issue_no'])
+            pair['only-issues'].append(link['issue_no'])
+
+        progress += 1
+    # Getting the number of non-repeated elements in each pair 
+    pair['issues-pulls'] = len(del_duplicates(pair['issues-pulls']))
+    pair['pulls-commits'] = len(del_duplicates(pair['pulls-commits']))
+    pair['commits-issues'] = len(del_duplicates(pair['commits-issues']))
+    pair['only-pulls'] = len(del_duplicates(pair['only-pulls']))
+    pair['only-issues'] = len(del_duplicates(pair['only-issues']))
+
+    # Computing pair percentages
+    issues_pulls_percentage = pair['issues-pulls'] * 100 / issues_total
+    pulls_issues_percentage = pair['issues-pulls'] * 100 / pulls_total
+    pulls_commits_percentage = pair['only-pulls']    * 100 / pulls_total
+    commits_pulls_percentage = pair['pulls-commits'] * 100 / commits_total
+    issues_commits_percentage = pair['only-issues']    * 100 / issues_total
+    commits_issues_percentage = pair['commits-issues'] * 100 / commits_total
+    # Storing all statistics in one string
+    statistics =  "--------------------------------------------------------------"
+    statistics += "\nNúmero de pares issues-pulls: "                + str(pair['issues-pulls'])
+    statistics += "\nNúmero de issues no asociados a pulls: "       + str(issues_total - pair['issues-pulls']) 
+    statistics += "\nNúmero de pulls no asociados a issues: "       + str(pulls_total  - pair['issues-pulls']) + "\n"
+    statistics += "\nPorcentaje de issues asociados a pulls: "      + str(issues_pulls_percentage)
+    statistics += "\nPorcentaje de issues no asociados a pulls: "   + str(100 - issues_pulls_percentage)
+    statistics += "\nPorcentaje de pulls asociados a issues: "      + str(pulls_issues_percentage)
+    statistics += "\nPorcentaje de pulls no asociados a issues: "   + str(100 - pulls_issues_percentage)
+    statistics += "\n--------------------------------------------------------------"
+    statistics += "\nNúmero de pares pulls-commits: "               + str(pair['pulls-commits'])
+    statistics += "\nNúmero de pulls no asociados a commits: "      + str(pulls_total    - pair['only-pulls']) 
+    statistics += "\nNúmero de commits no asociados a pulls: "      + str(commits_total  - pair['pulls-commits']) + "\n"
+    statistics += "\nPorcentaje de pulls asociados a commits: "     + str(pulls_commits_percentage)
+    statistics += "\nPorcentaje de pulls no asociados a commits: "  + str(100 - pulls_commits_percentage)
+    statistics += "\nPorcentaje de commits asociados a pulls: "     + str(commits_pulls_percentage)
+    statistics += "\nPorcentaje de commits no asociados a pulls: "  + str(100 - commits_pulls_percentage)
+    statistics += "\n--------------------------------------------------------------"
+    statistics += "\nNúmero de pares commits-issues: "              + str(pair['commits-issues'])
+    statistics += "\nNúmero de commits no asociados a issues: "     + str(commits_total - pair['commits-issues']) 
+    statistics += "\nNúmero de issues no asociados a commits: "     + str(issues_total  - pair['only-issues']) + "\n"
+    statistics += "\nPorcentaje de commits asociados a issues: "    + str(commits_issues_percentage)
+    statistics += "\nPorcentaje de commits no asociados a issues: " + str(100 - commits_issues_percentage)
+    statistics += "\nPorcentaje de issues asociados a commits: "    + str(issues_commits_percentage)
+    statistics += "\nPorcentaje de issues no asociados a commits:"  + str(100 - issues_commits_percentage)
+    statistics += "\n--------------------------------------------------------------"
+
+    linking_statistics.write(statistics)
+
     linking_statistics.close()
 
 #get_pulls(g)
@@ -828,4 +959,10 @@ def get_linking_statistics():
 #get_issues_and_pulls(g)
 #get_issues_and_pulls_events(g)
 
-link_commits_pulls_and_issues(g)
+get_commits_pulls(g)
+
+#link_commits_pulls_and_issues(g)
+#analyze_issues_and_pulls()
+#get_linking_statistics()
+
+#input("Press any key to close...")

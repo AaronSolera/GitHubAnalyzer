@@ -1,34 +1,28 @@
 --------------------------------------------------------------
+Número de pares issues-pulls: 3621
+Número de issues no asociados a pulls: 19877
+Número de pulls no asociados a issues: 20423
 
-Número de issues asociados a pulls: 
-Número de issues no asociados a pulls:
-Número de pulls no asociados a issues:
-
-Porcentaje de issues asociados a pulls: 
-Porcentaje de issues no asociados a pulls: 
-Porcentaje de pulls asociados a issues: 
-Porcentaje de pulls no asociados a issues: 
-
+Porcentaje de issues asociados a pulls: 15.409822112520214
+Porcentaje de issues no asociados a pulls: 84.59017788747978
+Porcentaje de pulls asociados a issues: 15.059890201297621
+Porcentaje de pulls no asociados a issues: 84.94010979870238
 --------------------------------------------------------------
+Número de pares pulls-commits: 61335
+Número de pulls no asociados a commits: 5407
+Número de commits no asociados a pulls: 2933
 
-Número de pulls asociados a commits: 
-Número de pulls no asociados a commits: 
-Número de commits no asociados a pulls:
-
-Porcentaje de pulls asociados a commits: 
-Porcentaje de pulls no asociados a commits:
-Porcentaje de commits asociados a pulls: 
-Porcentaje de commits no asociados a pulls:
-
+Porcentaje de pulls asociados a commits: 77.51206122109465
+Porcentaje de pulls no asociados a commits: 22.487938778905345
+Porcentaje de commits asociados a pulls: 95.43629800211613
+Porcentaje de commits no asociados a pulls: 4.563701997883868
 --------------------------------------------------------------
+Número de pares commits-issues: 13017
+Número de commits no asociados a issues: 51251
+Número de issues no asociados a commits: 20217
 
-Número de issues asociados a commits:
-Número de issues no asociados a commits:
-Número de commits no asociados a issues: 
-
-Porcentaje de issues asociados a commits:
-Porcentaje de issues no asociados a commits:
-Porcentaje de commits asociados a issues:
-Porcentaje de commits no asociados a issues:
-
+Porcentaje de commits asociados a issues: 20.2542478371818
+Porcentaje de commits no asociados a issues: 79.7457521628182
+Porcentaje de issues asociados a commits: 13.962890458762448
+Porcentaje de issues no asociados a commits:86.03710954123756
 --------------------------------------------------------------

@@ -1,0 +1,36 @@
+--------------------------------------------------------------
+Número de pares issues-pulls: 1686
+Número de issues no asociados a pulls: 21812
+Número de pulls no asociados a issues: 22358
+
+Porcentaje de issues asociados a pulls: 7.17507873010469
+Porcentaje de issues no asociados a pulls: 92.82492126989531
+Porcentaje de pulls asociados a issues: 7.012144401929795
+Porcentaje de pulls no asociados a issues: 92.98785559807021
+--------------------------------------------------------------
+Número de pares pulls-commits: 62023
+Número de pulls no asociados a commits: 5105
+Número de commits no asociados a pulls: 2953
+
+Porcentaje de pulls asociados a commits: 78.768091831642
+Porcentaje de pulls no asociados a commits: 21.231908168358004
+Porcentaje de commits asociados a pulls: 95.45524501354346
+Porcentaje de commits no asociados a pulls: 4.544754986456539
+--------------------------------------------------------------
+Número de pares commits-issues: 5275
+Número de commits no asociados a issues: 59701
+Número de issues no asociados a commits: 21926
+
+Porcentaje de commits asociados a issues: 8.118382171878848
+Porcentaje de commits no asociados a issues: 91.88161782812115
+Porcentaje de issues asociados a commits: 6.689931057962379
+Porcentaje de issues no asociados a commits:93.31006894203762
+--------------------------------------------------------------
+El commit 28b4508467cdc2ad2af7cb2f52c74cc73515a7e8 tiene asociado 1 pulls, lo cual es la mímima cantidad de pulls asociados a commits
+El commit 28b4508467cdc2ad2af7cb2f52c74cc73515a7e8 tiene asociado 1 pulls, lo cual es la máxima cantidad de pulls asociados a commits
+La cantidad promedio de pull requests asociados a commits es 0.9545377595138815
+
+El pull request 49007 tiene asociado 1 commits, lo cual es la mímima cantidad de commits asociados a pulls
+El pull request 41157 tiene asociado 568 commits, lo cual es la máxima cantidad de commits asociados a pulls
+La cantidad promedio de commits asociados a pull requests es 3.2641966212304676
+--------------------------------------------------------------

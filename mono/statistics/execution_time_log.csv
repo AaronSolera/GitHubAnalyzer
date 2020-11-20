@@ -1,0 +1,8 @@
+method_name,date,execution_time
+get_issues_and_pulls,19/11/2020,1617.3219285011292
+get_issues_and_pulls_events,19/11/2020,3157.5593333244324
+get_issues_comments,19/11/2020,3117.0422620773315
+get_pulls_comments,19/11/2020,379.3746383190155
+get_commits_pulls,20/11/2020,5310.705154418945
+get_pulls_commits,20/11/2020,5537.621525764465
+analyze_linking_events,20/11/2020,0.0785527229309082

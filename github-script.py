@@ -3,8 +3,8 @@ from data_handler import *
 from statistics_handler import *
 from pprint import *
 
-github_token = "33c7e378a1a6bb6b892b8c1533dbac100de04c9f"
-github_repo = input("Write repository's name (format: creator/repository): ")
+github_token = ""
+github_repo = "mono/mono"
 
 g = get_repository(github_token, github_repo)
 

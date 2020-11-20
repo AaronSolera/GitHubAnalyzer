@@ -15,7 +15,6 @@ def check_rate_limit(g):
     while remaining <= 20:
         print("    ", "Process is sleeping 1 hour due maximum rate limit reached.\n")
         sleep(3660)
-        g = Github(github_token)
         g.per_page = 100
         g.get_rate_limit()
         (remaining, maximum) = g.rate_limiting

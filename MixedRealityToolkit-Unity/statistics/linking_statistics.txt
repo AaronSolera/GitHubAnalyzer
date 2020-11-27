@@ -1,0 +1,36 @@
+--------------------------------------------------------------
+Número de pares issues-pulls: 502
+Número de issues no asociados a pulls: 3938
+Número de pulls no asociados a issues: 4036
+
+Porcentaje de issues asociados a pulls: 11.306306306306306
+Porcentaje de issues no asociados a pulls: 88.69369369369369
+Porcentaje de pulls asociados a issues: 11.06214191273689
+Porcentaje de pulls no asociados a issues: 88.93785808726311
+--------------------------------------------------------------
+Número de pares pulls-commits: 14703
+Número de pulls no asociados a commits: 1568
+Número de commits no asociados a pulls: 4
+
+Porcentaje de pulls asociados a commits: 65.44733362714852
+Porcentaje de pulls no asociados a commits: 34.552666372851476
+Porcentaje de commits asociados a pulls: 99.9728020670429
+Porcentaje de commits no asociados a pulls: 0.02719793295709394
+--------------------------------------------------------------
+Número de pares commits-issues: 2293
+Número de commits no asociados a issues: 12414
+Número de issues no asociados a commits: 3986
+
+Porcentaje de commits asociados a issues: 15.591215067654858
+Porcentaje de commits no asociados a issues: 84.40878493234514
+Porcentaje de issues asociados a commits: 10.225225225225225
+Porcentaje de issues no asociados a commits:89.77477477477477
+--------------------------------------------------------------
+El commit 1d180dfcacd10332a2f8bfb8cea0f884851ec63e tiene asociado 1 pulls, lo cual es la mímima cantidad de pulls asociados a commits
+El commit 1d180dfcacd10332a2f8bfb8cea0f884851ec63e tiene asociado 1 pulls, lo cual es la máxima cantidad de pulls asociados a commits
+La cantidad promedio de pull requests asociados a commits es 0.9996600489528911
+
+El pull request 8976 tiene asociado 1 commits, lo cual es la mímima cantidad de commits asociados a pulls
+El pull request 4107 tiene asociado 178 commits, lo cual es la máxima cantidad de commits asociados a pulls
+La cantidad promedio de commits asociados a pull requests es 4.945509586276558
+--------------------------------------------------------------

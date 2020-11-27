@@ -3,8 +3,8 @@ from data_handler import *
 from statistics_handler import *
 from pprint import *
 
-github_token = ""
-github_repo = "mono/mono"
+github_token = "1fb2f8ccbc7b12603b98277d50fa4f7f3180173a"
+github_repo = "dotnet/efcore"
 
 g = get_repository(github_token, github_repo)
 

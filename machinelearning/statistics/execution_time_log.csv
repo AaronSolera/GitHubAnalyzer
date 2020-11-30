@@ -1,0 +1,13 @@
+method_name,date,execution_time
+get_issues_and_pulls,27/11/2020,430.8606595993042
+get_issues_and_pulls_events,27/11/2020,3108.9205219745636
+get_issues_comments,27/11/2020,1060.9166641235352
+get_pulls_comments,27/11/2020,2109.238555908203
+get_commits_pulls,27/11/2020,4964.223863601685
+get_pulls_commits,28/11/2020,5654.296360254288
+analyze_linking_events,28/11/2020,0.07568955421447754
+analyze_issues_and_pulls,28/11/2020,1.750734567642212
+link_commits_pulls_and_issues,28/11/2020,0.047014713287353516
+analyze_issues_and_pulls,28/11/2020,1.5377397537231445
+get_pulls_commits_groups,28/11/2020,0.538867712020874
+get_linking_statistics,28/11/2020,0.0701284408569336

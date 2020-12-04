@@ -93,6 +93,25 @@ def get_linking_statistics(github_repo):
     else:
         commits_pulls_percentage = 0
         commits_issues_percentage = 0
+    # Calculating pull commit totals and ranging them
+    commits_pulls = generate_json_from_csv('commit_sha', workspace + '/files/commits_pulls.csv')
+    pulls_commits = generate_json_from_csv('pull_no', workspace + '/files/commits_pulls.csv')
+    commits_pulls_range = {1:0, 101:0, 201:0, 301:0, 401:0, 501:0, 601:0, 701:0, 801:0, 'más de 901':0}
+    pulls_commits_range = {1:0, 101:0, 201:0, 301:0, 401:0, 501:0, 601:0, 701:0, 801:0, 'más de 901':0}
+    # Set every commit with its pulls length
+    for (commit, attributes) in commits_pulls.items():
+        commits_len = len(del_duplicates(attributes['pull_no']))
+        if commits_len < 900:
+            commits_pulls_range[(int(commits_len // 100) * 100) + 1] += 1
+        else:
+            commits_pulls_range['más de 901'] += 1
+    # Set every pull with its commits length
+    for (pull, attributes) in pulls_commits.items():
+        pulls_len = len(del_duplicates(attributes['commit_sha']))
+        if pulls_len < 900:
+            pulls_commits_range[(int(pulls_len // 100) * 100) + 1] += 1
+        else:
+            pulls_commits_range['más de 901'] += 1
     # Storing all statistics in one string
     statistics =  "--------------------------------------------------------------"
     statistics += "\nNúmero de pares issues-pulls: "                + str(pair['issues-pulls'])
@@ -125,6 +144,20 @@ def get_linking_statistics(github_repo):
     statistics += "\nEl pull request " + pull_min['no'] + " tiene asociado " + str(pull_min['value']) + " commits, lo cual es la mímima cantidad de commits asociados a pulls"
     statistics += "\nEl pull request " + pull_max['no'] + " tiene asociado " + str(pull_max['value']) + " commits, lo cual es la máxima cantidad de commits asociados a pulls"
     statistics += "\nLa cantidad promedio de commits asociados a pull requests es " + str(pull_average)
+    statistics += "\n--------------------------------------------------------------"
+    statistics += "\nRangos de cantidad de commits asociados a pull requests:"
+    for (rang, length) in pulls_commits_range.items():
+        if rang == 'más de 901':
+            statistics += "\n       " + rang + " : " + str(length)
+        else:
+            statistics += "\n       " + str(rang) + " - " + str(rang + 99) + " : " + str(length)
+    statistics += "\n--------------------------------------------------------------"
+    statistics += "\nRangos de cantidad de pull requests asociados a commits:"
+    for (rang, length) in commits_pulls_range.items():
+        if rang == 'más de 901':
+            statistics += "\n       " + rang + " : " + str(length)
+        else:
+            statistics += "\n       " + str(rang) + " - " + str(rang + 99) + " : " + str(length)
     statistics += "\n--------------------------------------------------------------"
 
     linking_statistics.write(statistics)

@@ -34,3 +34,27 @@ El pull request 49007 tiene asociado 1 commits, lo cual es la mímima cantidad de
 El pull request 41157 tiene asociado 568 commits, lo cual es la máxima cantidad de commits asociados a pulls
 La cantidad promedio de commits asociados a pull requests es 3.2641966212304676
 --------------------------------------------------------------
+Rangos de cantidad de commits asociados a pull requests:
+       1 - 100 : 19224
+       101 - 200 : 16
+       201 - 300 : 3
+       301 - 400 : 2
+       401 - 500 : 0
+       501 - 600 : 1
+       601 - 700 : 0
+       701 - 800 : 0
+       801 - 900 : 0
+       más de 901 : 1
+--------------------------------------------------------------
+Rangos de cantidad de pull requests asociados a commits:
+       1 - 100 : 66349
+       101 - 200 : 0
+       201 - 300 : 0
+       301 - 400 : 0
+       401 - 500 : 0
+       501 - 600 : 0
+       601 - 700 : 0
+       701 - 800 : 0
+       801 - 900 : 0
+       más de 901 : 0
+--------------------------------------------------------------

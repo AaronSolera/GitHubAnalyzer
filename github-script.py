@@ -4,13 +4,11 @@ from statistics_handler import *
 from pprint import *
 
 github_token = ""
-github_repo = "dotnet/roslyn"
-
-#git_lists = ["/Dynamo","/efcore","/machinelearning","/MixedRealityToolkit-Unity", "/mono", "/ravendb", "/runtime", "/sdk"]
+github_repo = "mono/mono"
 
 #g = get_repository(github_token, github_repo)
 
-get_issues_and_pulls(g, github_repo)
+#get_issues_and_pulls(g, github_repo)
 #get_issues_and_pulls_events(g, github_repo)
 #get_issues_comments(g, github_repo)
 #get_pulls_comments(g, github_repo)
@@ -21,9 +19,4 @@ get_issues_and_pulls(g, github_repo)
 #link_commits_pulls_and_issues(github_repo)
 #analyze_issues_and_pulls(github_repo)
 #get_pulls_commits_groups(github_repo)
-
-"""
-for git in git_lists:
-	print(git + "\n")
-	get_linking_statistics(git)
-"""
+#get_linking_statistics(github_repo)

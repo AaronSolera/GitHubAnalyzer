@@ -1,37 +1,37 @@
 --------------------------------------------------------------
-Número de pares issues-pulls: 172
-Número de issues no asociados a pulls: 9035
-Número de pulls no asociados a issues: 5247
+NÃºmero de pares issues-pulls: 172
+NÃºmero de issues no asociados a pulls: 9035
+NÃºmero de pulls no asociados a issues: 5247
 
 Porcentaje de issues asociados a pulls: 1.8681438036276745
 Porcentaje de issues no asociados a pulls: 98.13185619637233
 Porcentaje de pulls asociados a issues: 3.1740173463738697
 Porcentaje de pulls no asociados a issues: 96.82598265362613
 --------------------------------------------------------------
-Número de pares pulls-commits: 11094
-Número de pulls no asociados a commits: 1205
-Número de commits no asociados a pulls: 13884
+NÃºmero de pares pulls-commits: 11094
+NÃºmero de pulls no asociados a commits: 1205
+NÃºmero de commits no asociados a pulls: 13884
 
 Porcentaje de pulls asociados a commits: 77.7634249861598
 Porcentaje de pulls no asociados a commits: 22.236575013840195
 Porcentaje de commits asociados a pulls: 44.41508527504204
 Porcentaje de commits no asociados a pulls: 55.58491472495796
 --------------------------------------------------------------
-Número de pares commits-issues: 695
-Número de commits no asociados a issues: 24283
-Número de issues no asociados a commits: 9045
+NÃºmero de pares commits-issues: 695
+NÃºmero de commits no asociados a issues: 24283
+NÃºmero de issues no asociados a commits: 9045
 
 Porcentaje de commits asociados a issues: 2.7824485547281608
 Porcentaje de commits no asociados a issues: 97.21755144527184
 Porcentaje de issues asociados a commits: 1.7595307917888563
 Porcentaje de issues no asociados a commits:98.24046920821114
 --------------------------------------------------------------
-El commit 65f3634e533c9c360d9cff9d05c524305491ad5e tiene asociado 1 pulls, lo cual es la mímima cantidad de pulls asociados a commits
-El commit 65f3634e533c9c360d9cff9d05c524305491ad5e tiene asociado 1 pulls, lo cual es la máxima cantidad de pulls asociados a commits
+El commit 65f3634e533c9c360d9cff9d05c524305491ad5e tiene asociado 1 pulls, lo cual es la mÃ­mima cantidad de pulls asociados a commits
+El commit 65f3634e533c9c360d9cff9d05c524305491ad5e tiene asociado 1 pulls, lo cual es la mÃ¡xima cantidad de pulls asociados a commits
 La cantidad promedio de pull requests asociados a commits es 0.44413307178027844
 
-El pull request 14727 tiene asociado 1 commits, lo cual es la mímima cantidad de commits asociados a pulls
-El pull request 11914 tiene asociado 1000 commits, lo cual es la máxima cantidad de commits asociados a pulls
+El pull request 14727 tiene asociado 1 commits, lo cual es la mÃ­mima cantidad de commits asociados a pulls
+El pull request 11914 tiene asociado 1000 commits, lo cual es la mÃ¡xima cantidad de commits asociados a pulls
 La cantidad promedio de commits asociados a pull requests es 2.6301564722619313
 --------------------------------------------------------------
 Rangos de cantidad de commits asociados a pull requests:
@@ -44,7 +44,7 @@ Rangos de cantidad de commits asociados a pull requests:
        601 - 700 : 0
        701 - 800 : 1
        801 - 900 : 0
-       más de 901 : 4
+       mÃ¡s de 901 : 4
 --------------------------------------------------------------
 Rangos de cantidad de pull requests asociados a commits:
        1 - 100 : 25074
@@ -56,5 +56,5 @@ Rangos de cantidad de pull requests asociados a commits:
        601 - 700 : 0
        701 - 800 : 0
        801 - 900 : 0
-       más de 901 : 0
+       mÃ¡s de 901 : 0
 --------------------------------------------------------------

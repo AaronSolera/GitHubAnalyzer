@@ -1,36 +1,60 @@
 --------------------------------------------------------------
-Número de pares issues-pulls: 118
-Número de issues no asociados a pulls: 4285
-Número de pulls no asociados a issues: 16047
+NÃºmero de pares issues-pulls: 118
+NÃºmero de issues no asociados a pulls: 4295
+NÃºmero de pulls no asociados a issues: 16064
 
-Porcentaje de issues asociados a pulls: 2.6799909152850327
-Porcentaje de issues no asociados a pulls: 97.32000908471497
-Porcentaje de pulls asociados a issues: 0.7299721620785647
-Porcentaje de pulls no asociados a issues: 99.27002783792143
+Porcentaje de issues asociados a pulls: 2.673917969635169
+Porcentaje de issues no asociados a pulls: 97.32608203036483
+Porcentaje de pulls asociados a issues: 0.7292052898282042
+Porcentaje de pulls no asociados a issues: 99.2707947101718
 --------------------------------------------------------------
-Número de pares pulls-commits: 2132
-Número de pulls no asociados a commits: 14416
-Número de commits no asociados a pulls: 80
+NÃºmero de pares pulls-commits: 2132
+NÃºmero de pulls no asociados a commits: 14433
+NÃºmero de commits no asociados a pulls: 80
 
-Porcentaje de pulls asociados a commits: 10.819672131147541
-Porcentaje de pulls no asociados a commits: 89.18032786885246
+Porcentaje de pulls asociados a commits: 10.808305524657026
+Porcentaje de pulls no asociados a commits: 89.19169447534297
 Porcentaje de commits asociados a pulls: 96.38336347197107
 Porcentaje de commits no asociados a pulls: 3.616636528028934
 --------------------------------------------------------------
-Número de pares commits-issues: 126
-Número de commits no asociados a issues: 2086
-Número de issues no asociados a commits: 4287
+NÃºmero de pares commits-issues: 126
+NÃºmero de commits no asociados a issues: 2086
+NÃºmero de issues no asociados a commits: 4297
 
 Porcentaje de commits asociados a issues: 5.69620253164557
 Porcentaje de commits no asociados a issues: 94.30379746835443
-Porcentaje de issues asociados a commits: 2.6345673404496934
-Porcentaje de issues no asociados a commits:97.36543265955031
+Porcentaje de issues asociados a commits: 2.6285973260820303
+Porcentaje de issues no asociados a commits:97.37140267391797
 --------------------------------------------------------------
-El commit b70dd6a79e87284fa2b60410d0e09c84080dbd5a tiene asociado 1 pulls, lo cual es la mímima cantidad de pulls asociados a commits
-El commit b70dd6a79e87284fa2b60410d0e09c84080dbd5a tiene asociado 1 pulls, lo cual es la máxima cantidad de pulls asociados a commits
+El commit b70dd6a79e87284fa2b60410d0e09c84080dbd5a tiene asociado 1 pulls, lo cual es la mÃ­mima cantidad de pulls asociados a commits
+El commit b70dd6a79e87284fa2b60410d0e09c84080dbd5a tiene asociado 1 pulls, lo cual es la mÃ¡xima cantidad de pulls asociados a commits
 La cantidad promedio de pull requests asociados a commits es 0.9633981021238514
 
-El pull request 20594 tiene asociado 1 commits, lo cual es la mímima cantidad de commits asociados a pulls
-El pull request 18491 tiene asociado 33 commits, lo cual es la máxima cantidad de commits asociados a pulls
+El pull request 20594 tiene asociado 1 commits, lo cual es la mÃ­mima cantidad de commits asociados a pulls
+El pull request 18491 tiene asociado 33 commits, lo cual es la mÃ¡xima cantidad de commits asociados a pulls
 La cantidad promedio de commits asociados a pull requests es 1.218285714285716
+--------------------------------------------------------------
+Rangos de cantidad de commits asociados a pull requests:
+       1 - 100 : 2043
+       101 - 200 : 0
+       201 - 300 : 0
+       301 - 400 : 0
+       401 - 500 : 0
+       501 - 600 : 0
+       601 - 700 : 0
+       701 - 800 : 0
+       801 - 900 : 0
+       mÃ¡s de 901 : 0
+--------------------------------------------------------------
+Rangos de cantidad de pull requests asociados a commits:
+       1 - 100 : 2510
+       101 - 200 : 0
+       201 - 300 : 0
+       301 - 400 : 0
+       401 - 500 : 0
+       501 - 600 : 0
+       601 - 700 : 0
+       701 - 800 : 0
+       801 - 900 : 0
+       mÃ¡s de 901 : 0
 --------------------------------------------------------------

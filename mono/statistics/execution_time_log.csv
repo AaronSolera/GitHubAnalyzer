@@ -13,3 +13,5 @@ link_commits_pulls_and_issues,19/11/2020,0.2800478935241699
 analyze_issues_and_pulls,19/11/2020,7.522522687911987
 get_pulls_commits_groups,19/11/2020,1.0482497215270996
 get_linking_statistics,19/11/2020,0.6241550445556641
+get_issues_and_pulls,04/12/2020,1544.4989082813263
+get_linking_statistics,04/12/2020,0.4218764305114746
